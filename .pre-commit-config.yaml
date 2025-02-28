@@ -1,0 +1,122 @@
+default_language_version:
+  python: python3.12
+
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-toml
+    -   id: check-added-large-files
+        args: ['--maxkb=1024']
+    -   id: check-ast
+    -   id: check-case-conflict
+    -   id: check-docstring-first
+    -   id: check-executables-have-shebangs
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+    -   id: mixed-line-ending
+        args: ['--fix=lf']
+    -   id: check-shebang-scripts-are-executable
+    -   id: debug-statements
+
+# Python formatting and linting
+-   repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.8
+    hooks:
+    -   id: ruff
+        args: ["--fix", "--exit-non-zero-on-fix"]
+    -   id: ruff-format
+
+# Security scanning for Python
+-   repo: https://github.com/pycqa/bandit
+    rev: 1.8.3
+    hooks:
+    -   id: bandit
+        args: [
+            "--ini", ".bandit",
+            "--severity", "high",
+            "--confidence", "high"
+        ]
+
+# Check for secrets and sensitive information
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.24.0
+    hooks:
+    -   id: gitleaks
+
+# Python static type checking - disabled due to planned future type improvements
+# -   repo: https://github.com/pre-commit/mirrors-mypy
+#     rev: v1.15.0
+#     hooks:
+#     -   id: mypy
+#         additional_dependencies: [types-requests]
+#         args: ["--ignore-missing-imports", "--config-file=.mypy.ini"]
+#         exclude: "^tests/"
+
+# Terraform tools
+-   repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.97.4
+    hooks:
+    -   id: terraform_fmt
+    -   id: terraform_docs
+    # Validation is disabled as this is an example project with partial implementations
+    # -   id: terraform_validate
+    #     exclude: '^modules|\.terraform'
+    # Trivy scanning is disabled for this example project
+    # -   id: terraform_trivy
+    #     args:
+    #       - --args=--config=.trivy.yaml
+    #     exclude: '^modules|\.terraform'
+
+# AWS CloudFormation linting
+-   repo: https://github.com/aws-cloudformation/cfn-lint
+    rev: v1.26.1
+    hooks:
+    -   id: cfn-lint
+        files: \.yaml$|\.yml$|\.json$
+        exclude: >
+          (?x)^(
+            \.pre-commit-config\.yaml|
+            \.trivy\.yaml|
+            \.trivy\.json|
+            \.commitlintrc\.yaml|
+            src/dynatrace/dashboard\.json
+          )$
+
+# Infrastructure security scanning
+-   repo: https://github.com/bridgecrewio/checkov.git
+    rev: 3.2.378
+    hooks:
+    -   id: checkov
+        args: [--quiet, --soft-fail]
+
+# Python dependency management
+-   repo: local
+    hooks:
+    -   id: poetry-check
+        name: poetry check
+        entry: poetry check
+        language: system
+        pass_filenames: false
+        files: (pyproject.toml|poetry.lock)
+
+    -   id: poetry-lock-check
+        name: poetry lock check
+        description: Check if poetry.lock is in sync with pyproject.toml
+        entry: poetry lock --check
+        language: system
+        pass_filenames: false
+        files: (pyproject.toml|poetry.lock)
+
+    -   id: pytest-check
+        name: pytest check
+        entry: poetry run pytest
+        language: system
+        pass_filenames: false
+        always_run: false  # Only run when requested

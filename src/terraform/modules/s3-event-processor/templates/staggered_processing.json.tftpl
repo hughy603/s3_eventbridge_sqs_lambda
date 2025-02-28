@@ -1,0 +1,186 @@
+{
+  "Comment": "Process objects from SQS in a staggered manner",
+  "StartAt": "GetMessagesFromQueue",
+  "States": {
+    "GetMessagesFromQueue": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:receiveMessage",
+      "Parameters": {
+        "QueueUrl": "${sqs_queue_url}",
+        "MaxNumberOfMessages": 10,
+        "WaitTimeSeconds": 10
+      },
+      "Next": "CheckForMessages",
+      "ResultPath": "$.messages",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "SendToStepFunctionsDLQ"
+        }
+      ]
+    },
+    "SendToStepFunctionsDLQ": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sqs:sendMessage",
+      "Parameters": {
+        "QueueUrl": "${step_functions_dlq_url}",
+        "MessageBody": {
+          "error.$": "$.error",
+          "timestamp.$": "$$.Execution.StartTime",
+          "executionArn.$": "$$.Execution.Id"
+        }
+      },
+      "Next": "Wait"
+    },
+    "CheckForMessages": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.messages.Messages[0]",
+          "IsPresent": true,
+          "Next": "ProcessMessages"
+        }
+      ],
+      "Default": "Wait"
+    },
+    "Wait": {
+      "Type": "Wait",
+      "Seconds": 10,
+      "Next": "GetMessagesFromQueue"
+    },
+    "ProcessMessages": {
+      "Type": "Map",
+      "ItemsPath": "$.messages.Messages",
+      "MaxConcurrency": ${max_concurrency},
+      "Iterator": {
+        "StartAt": "ParseMessage",
+        "States": {
+          "ParseMessage": {
+            "Type": "Pass",
+            "Parameters": {
+              "message.$": "$",
+              "body.$": "$.Body"
+            },
+            "Next": "ParseBody"
+          },
+          "ParseBody": {
+            "Type": "Pass",
+            "Parameters": {
+              "body.$": "States.StringToJson($.body)"
+            },
+            "Next": "PrepareS3Details",
+            "Catch": [
+              {
+                "ErrorEquals": ["States.ALL"],
+                "ResultPath": "$.error",
+                "Next": "SendToParsingDLQ"
+              }
+            ]
+          },
+          "SendToParsingDLQ": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+              "QueueUrl": "${step_functions_dlq_url}",
+              "MessageBody": {
+                "error.$": "$.error",
+                "message.$": "$.message",
+                "stage": "parsing",
+                "timestamp.$": "$$.Execution.StartTime"
+              }
+            },
+            "Next": "DeleteMessage"
+          },
+          "PrepareS3Details": {
+            "Type": "Pass",
+            "Parameters": {
+              "message_id.$": "$.message.MessageId",
+              "receipt_handle.$": "$.message.ReceiptHandle",
+              "s3_details": {
+                "bucket.$": "$.body.detail.bucket.name",
+                "key.$": "$.body.detail.object.key"
+              }
+            },
+            "Next": "StaggeredWait"
+          },
+          "StaggeredWait": {
+            "Type": "Wait",
+            "SecondsPath": "$$.Map.Item.Index",
+            "Next": "InvokeLambda"
+          },
+          "InvokeLambda": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": "${lambda_function_name}",
+              "Payload": {
+                "s3_details.$": "$.s3_details"
+              }
+            },
+            "Next": "DeleteMessage",
+            "Retry": [
+              {
+                "ErrorEquals": ["States.ALL"],
+                "IntervalSeconds": 2,
+                "MaxAttempts": 3,
+                "BackoffRate": 2
+              }
+            ],
+            "Catch": [
+              {
+                "ErrorEquals": ["States.ALL"],
+                "Next": "RecordError"
+              }
+            ],
+            "ResultPath": "$.lambda_result"
+          },
+          "RecordError": {
+            "Type": "Pass",
+            "Parameters": {
+              "error.$": "$$.State.Error",
+              "cause.$": "$$.State.ErrorCause",
+              "message_id.$": "$.message_id",
+              "s3_details.$": "$.s3_details"
+            },
+            "Next": "SendToLambdaDLQ"
+          },
+          "SendToLambdaDLQ": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+              "QueueUrl": "${lambda_dlq_url}",
+              "MessageBody": {
+                "error.$": "$.error",
+                "cause.$": "$.cause",
+                "s3_details.$": "$.s3_details",
+                "message_id.$": "$.message_id",
+                "stage": "lambda_invocation",
+                "timestamp.$": "$$.Execution.StartTime"
+              }
+            },
+            "Next": "DeleteMessage"
+          },
+          "DeleteMessage": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:deleteMessage",
+            "Parameters": {
+              "QueueUrl": "${sqs_queue_url}",
+              "ReceiptHandle.$": "$.receipt_handle"
+            },
+            "End": true
+          }
+        }
+      },
+      "Next": "GetMessagesFromQueue"
+    }
+  }
+}

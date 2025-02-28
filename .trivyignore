@@ -1,0 +1,12 @@
+# Ignore specific security issues
+
+# AWS Lambda Function Version - This is now fixed using aws_lambda_alias
+aws_lambda_function_version
+
+# False positives or low risk issues
+MEDIUM:aws-iam-no-policy-wildcards
+AVD-AWS-0057
+AVD-AWS-0017 # CloudWatch logs not using KMS CMK (low severity, using default encryption)
+AVD-AWS-0066 # Lambda function without tracing (low severity, not required in all environments)
+s3-bucket-logging # Bucket logging disabled (low severity, not required in all environments)
+AVD-AWS-0132 # S3 bucket not using CMK (would require KMS setup)

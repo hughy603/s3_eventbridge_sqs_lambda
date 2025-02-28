@@ -1,0 +1,22 @@
+severity: ["CRITICAL", "HIGH", "MEDIUM"]
+exit-code: 1
+quiet: true
+output: "/dev/stdout"
+format: "table"
+timeout: 10m
+
+# Ignore specific checks
+ignorefile: .trivyignore
+
+# Configure specific scanners
+scanners:
+  - vuln
+  - config
+  - secret
+
+misconfiguration:
+  include-non-failures: false
+
+# Terraform specific settings
+terraform:
+  exclude-downloaded-modules: true

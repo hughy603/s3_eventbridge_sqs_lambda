@@ -1,0 +1,16 @@
+{
+  "exclude": {
+    "ids": [
+      "aws-s3-enable-bucket-encryption"
+    ],
+    "paths": [
+      "**/_examples/**/*.tf"
+    ]
+  },
+  "severity_overrides": {
+    "aws-s3-enable-versioning": "MEDIUM"
+  },
+  "weak_cryptography": false,
+  "ignore_hcl_errors": true,
+  "config_var": "value1"
+}

@@ -1,0 +1,47 @@
+extends:
+  - '@commitlint/config-conventional'
+
+rules:
+  type-enum:
+    - 2
+    - always
+    -
+      - build     # Changes to the build process or tooling
+      - chore     # Regular maintenance tasks
+      - ci        # CI/CD configuration changes
+      - docs      # Documentation only changes
+      - feat      # New features
+      - fix       # Bug fixes
+      - perf      # Performance improvements
+      - refactor  # Code changes that neither fix bugs nor add features
+      - revert    # Revert a previous commit
+      - style     # Code style changes (formatting, etc.)
+      - test      # Adding or fixing tests
+
+  # Enforce scope case
+  scope-case:
+    - 2
+    - always
+    - lower-case
+
+  # Subject case - sentence-case (first letter capitalized)
+  subject-case:
+    - 2
+    - never
+    - - 'upper-case'
+      - 'camel-case'
+      - 'kebab-case'
+      - 'pascal-case'
+      - 'snake-case'
+
+  # Maximum subject length
+  subject-max-length:
+    - 2
+    - always
+    - 72
+
+  # No period at the end of the subject
+  subject-full-stop:
+    - 2
+    - never
+    - '.'

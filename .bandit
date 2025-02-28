@@ -1,0 +1,21 @@
+[bandit]
+# Directories to exclude from analysis
+exclude_dirs: tests,test,*_test.py,.venv,venv
+
+# Tests to skip
+skips: B101,B104,B311
+
+# Custom settings for specific tests
+any_other_function_with_shell_equals_true: B602
+
+# Severity level
+# HIGH - HIGH only
+# MEDIUM - MEDIUM and HIGH
+# LOW - LOW, MEDIUM and HIGH
+severity: 2
+
+# Confidence level
+# HIGH - HIGH only
+# MEDIUM - MEDIUM and HIGH
+# LOW - LOW, MEDIUM and HIGH
+confidence: 2

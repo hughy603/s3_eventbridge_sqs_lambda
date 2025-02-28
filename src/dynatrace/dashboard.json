@@ -1,0 +1,684 @@
+{
+  "dashboardMetadata": {
+    "name": "S3-EventBridge-SQS-Lambda Pipeline",
+    "shared": true,
+    "owner": "admin",
+    "sharingDetails": {
+      "linkShared": true,
+      "published": true
+    },
+    "dashboardFilter": {
+      "timeframe": "l_2_HOURS",
+      "managementZone": null
+    }
+  },
+  "tiles": [
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 0,
+        "left": 0,
+        "width": 1824,
+        "height": 76
+      },
+      "tileFilter": {},
+      "markdown": "# S3-EventBridge-SQS-Lambda Pipeline\nEnd-to-end monitoring of the staggered Lambda invocation pipeline with detailed observability and event-driven alerting"
+    },
+    {
+      "name": "SQS Queue Metrics",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 0,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "SQS Queue Metrics",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.sqs.approximatenumberofmessagesvisible",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "QueueName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.sqs.approximatenumberofmessagesnotvisible",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "QueueName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Lambda Invocations",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 608,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Lambda Invocations",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.invocations",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Step Functions Executions",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 76,
+        "left": 1216,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Step Functions Executions",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.states.executionsstarted",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "StateMachineArn",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.states.executionssucceeded",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "StateMachineArn",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.states.executionsfailed",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "StateMachineArn",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Lambda Duration",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 0,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Lambda Duration",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.duration",
+              "aggregation": "AVG",
+              "type": "AREA",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.lambda.duration",
+              "aggregation": "MAX",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Lambda Concurrent Executions",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 608,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Lambda Concurrent Executions",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.concurrentexecutions",
+              "aggregation": "AVG",
+              "type": "AREA",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "DLQ Messages",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 380,
+        "left": 1216,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "DLQ Messages",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.sqs.approximatenumberofmessagesvisible",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "QueueName",
+                  "values": ["*dlq*"],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "S3 Bucket Operations",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 684,
+        "left": 0,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "S3 Bucket Operations",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.s3.allobjectscount",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "BucketName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "EventBridge Invocations",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 684,
+        "left": 608,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "EventBridge Invocations",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.events.invocations",
+              "aggregation": "SUM",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "RuleName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Lambda Errors",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 684,
+        "left": 1216,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Lambda Errors",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.errors",
+              "aggregation": "SUM",
+              "type": "AREA",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.lambda.throttles",
+              "aggregation": "SUM",
+              "type": "AREA",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Markdown",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 988,
+        "left": 0,
+        "width": 1824,
+        "height": 76
+      },
+      "tileFilter": {},
+      "markdown": "## SMTP Email Alerts Configuration\nAll email alerts are configured to use the central SMTP server per requirement. Alerts are configured for DLQ messages, Lambda errors, and Step Functions failures."
+    },
+    {
+      "name": "Cold Start Analysis",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 1064,
+        "left": 0,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Cold Start Analysis",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.duration",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                },
+                {
+                  "id": "1",
+                  "name": "Resource",
+                  "values": ["ColdStart"],
+                  "entityDimension": false
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.lambda.duration",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                },
+                {
+                  "id": "1",
+                  "name": "Resource",
+                  "values": ["WarmStart"],
+                  "entityDimension": false
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Queue Auto-Scaling Metrics",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 1064,
+        "left": 608,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "Queue Auto-Scaling Metrics",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "aws.lambda.concurrentexecutions",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "FunctionName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            },
+            {
+              "metric": "aws.sqs.approximatenumberofmessagesvisible",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [
+                {
+                  "id": "0",
+                  "name": "QueueName",
+                  "values": [],
+                  "entityDimension": true
+                }
+              ],
+              "sortAscending": false,
+              "sortColumn": false,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "CloudWatch Mirroring Status",
+      "tileType": "CUSTOM_CHARTING",
+      "configured": true,
+      "bounds": {
+        "top": 1064,
+        "left": 1216,
+        "width": 608,
+        "height": 304
+      },
+      "tileFilter": {},
+      "filterConfig": {
+        "type": "MIXED",
+        "customName": "CloudWatch Mirroring Status",
+        "defaultName": "Custom chart",
+        "chartConfig": {
+          "legendShown": true,
+          "type": "TIMESERIES",
+          "series": [
+            {
+              "metric": "custom.cloudwatch.mirror.status",
+              "aggregation": "AVG",
+              "type": "LINE",
+              "entityType": "IOT_CLIENT",
+              "dimensions": [],
+              "sortAscending": false,
+              "sortColumn": true,
+              "aggregationRate": "TOTAL"
+            }
+          ],
+          "resultMetadata": {}
+        },
+        "filtersPerEntityType": {}
+      }
+    },
+    {
+      "name": "Splunk Integration & Log Forwarding",
+      "tileType": "MARKDOWN",
+      "configured": true,
+      "bounds": {
+        "top": 1368,
+        "left": 0,
+        "width": 1824,
+        "height": 76
+      },
+      "tileFilter": {},
+      "markdown": "## Splunk Integration Status\nLambda logs are being forwarded to Splunk for centralized monitoring. The CloudWatch to Splunk bridge is active and forwarding all Lambda logs with structured JSON format for optimal parsing and dashboarding."
+    }
+  ]
+}
